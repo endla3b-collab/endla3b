@@ -820,6 +820,7 @@ function showAdminTab(id,el){
       window._db.collection('messages').add({
         type, text: body,
         author: currentUser.name,
+        residentEmail: currentUser.email,
         date: new Date().toLocaleDateString('ru-RU'),
         status: 'open',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1014,7 +1015,7 @@ function showAdminTab(id,el){
                 message_type: d.type || 'Обращение',
                 message_text: 'Ваше обращение "' + d.text + '" было отмечено как решённое.',
                 date: new Date().toLocaleDateString('ru-RU'),
-                to_email: d.author.includes('@') ? d.author : d.email || ''
+                to_email: d.residentEmail || ''
               }).catch(err => console.log('Email error:', err));
             }
             renderAdminMsgs();
@@ -1049,7 +1050,7 @@ function showAdminTab(id,el){
             message_type: d.type || 'Обращение',
             message_text: 'Ваше обращение: ' + d.text + '\n\nОтвет администратора: ' + reply,
             date: new Date().toLocaleDateString('ru-RU'),
-            to_email: d.author.includes('@') ? d.author : d.email || ''
+            to_email: d.residentEmail || ''
           }).catch(err => console.log('Email error:', err));
           renderAdminMsgs();
         });
