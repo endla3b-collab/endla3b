@@ -374,7 +374,7 @@
       <div class="admin-panel">
         <h3>👥 Список жильцов</h3>
         <table class="admin-table">
-          <thead><tr><th>Email</th><th>Пароль</th><th>Добавлен</th><th>Действие</th></tr></thead>
+          <thead><tr><th>Имя / Email</th><th>Доступ</th><th>Добавлен</th><th>Действие</th></tr></thead>
           <tbody id="admin-users-list"></tbody>
         </table>
         <div class="admin-form" style="margin-top:20px">
@@ -382,7 +382,7 @@
           <div class="field" style="margin:0"><label>Пароль</label><input type="text" id="new-user-pw" placeholder="минимум 6 символов"></div>
           <button class="btn-success" onclick="addUser()">+ Добавить</button>
         </div>
-        <p style="font-size:.8rem;color:var(--gray);margin-top:12px">⚠️ После изменений нажмите кнопку "Сохранить и скачать файл" внизу страницы.</p>
+        
       </div>
     </div>
 
@@ -437,10 +437,7 @@
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:32px;padding:24px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
-      <p style="margin-bottom:12px;font-weight:600;color:var(--navy)">После всех изменений скачайте обновлённый файл и загрузите на Netlify</p>
-      <button class="btn-primary" onclick="saveAndDownload()" style="font-size:1rem;padding:14px 32px">⬇️ Сохранить и скачать файл</button>
-    </div>
+
   </div>
 </div>
 
@@ -906,19 +903,31 @@ function showAdminTab(id,el){
 
   // ── ADMIN: USERS LIST ──
   function renderAdminUsers() {
-    const users = getData('ku_users', {});
     const tbody = document.getElementById('admin-users-list');
-    tbody.innerHTML = '';
-    const entries = Object.entries(users);
-    if(entries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--gray);padding:12px">Жильцов нет.</td></tr>';
-      return;
-    }
-    entries.forEach(([email, pw]) => {
-      const isAdmin = email === ADMIN_EMAIL;
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + email + (isAdmin ? ' <span class="admin-badge">Админ</span>' : '') + '</td><td><code>' + pw + '</code></td><td>—</td><td>' + (isAdmin ? '' : '<button class="btn-danger" onclick="deleteUser(\'' + email + '\')">Удалить</button>') + '</td>';
-      tbody.appendChild(tr);
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--gray);padding:12px">Загрузка...</td></tr>';
+    loadFirebase(() => {
+      window._db.collection('pending_users').where('status','==','approved').get()
+        .then(snap => {
+          tbody.innerHTML = '';
+          const adminTr = document.createElement('tr');
+          adminTr.innerHTML = '<td>admin <span class="admin-badge">Админ</span></td><td><small style="color:var(--gray)">Firebase Auth</small></td><td>—</td><td></td>';
+          tbody.appendChild(adminTr);
+          if(snap.empty) return;
+          snap.forEach(doc => {
+            const d = doc.data();
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${d.name||''}<br><small style="color:var(--gray)">${d.email||''}</small></td><td><small style="color:var(--gray)">Firebase Auth</small></td><td>${d.approvedAt||'—'}</td><td><button class="btn-danger" onclick="deleteFirebaseUser('${doc.id}','${d.email}')">Удалить</button></td>`;
+            tbody.appendChild(tr);
+          });
+        });
+    });
+  }
+
+  function deleteFirebaseUser(docId, email) {
+    if(!confirm('Удалить жильца ' + email + '? Удалите также в Firebase Console → Authentication')) return;
+    loadFirebase(() => {
+      window._db.collection('pending_users').doc(docId).delete()
+        .then(() => renderAdminUsers());
     });
   }
 
@@ -1133,11 +1142,7 @@ function showAdminTab(id,el){
     });
   }
 
-  function saveAndDownload() {
-    alert(lang==='ru'
-      ? 'Все данные сохраняются автоматически в Firebase. Обновлять файл не нужно!'
-      : 'Kõik andmed salvestatakse automaatselt Firebase\'is. Faili uuendamine pole vajalik!');
-  }
+
 
   // Load on page open
   document.addEventListener('DOMContentLoaded', () => { renderDocsForMembers(); });</script>
