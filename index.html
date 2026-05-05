@@ -129,8 +129,6 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init("LE_HdBspPDBqsL4o7");</script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>emailjs.init('LE_HdBspPDBqsL4o7');</script>
 </head>
 <body>
 
@@ -749,8 +747,8 @@ function showAdminTab(id,el){
 
             // Send email to admin via EmailJS
             if(window.emailjs) {
-              emailjs.send('service_obzzywl', 'template_2y7o3qi', {
-                from_name: name, from_email: email, apt: apt||'—'
+              emailjs.send('service_obzzywl', 'template_pjivgpv', {
+                from_name: name, from_email: email, apt: apt||'—', to_email: 'endla3b@gmail.com'
               }).catch(e => console.log('Email error:', e));
             }
 
@@ -1003,8 +1001,25 @@ function showAdminTab(id,el){
 
   function resolveMsgFb(id, status) {
     loadFirebase(() => {
-      window._db.collection('messages').doc(id).update({status: status==='done'?'open':'done'})
-        .then(() => renderAdminMsgs());
+      window._db.collection('messages').doc(id).get().then(doc => {
+        const d = doc.data();
+        const newStatus = status==='done'?'open':'done';
+        window._db.collection('messages').doc(id).update({status: newStatus})
+          .then(() => {
+            // Notify resident when marked as resolved
+            if(newStatus === 'done') {
+              emailjs.send('service_obzzywl', 'template_2y7o3qi', {
+                from_name: 'Администратор KÜ Endla 3b',
+                from_email: 'endla3b@gmail.com',
+                message_type: d.type || 'Обращение',
+                message_text: 'Ваше обращение "' + d.text + '" было отмечено как решённое.',
+                date: new Date().toLocaleDateString('ru-RU'),
+                to_email: d.author.includes('@') ? d.author : d.email || ''
+              }).catch(err => console.log('Email error:', err));
+            }
+            renderAdminMsgs();
+          });
+      });
     });
   }
 
@@ -1020,11 +1035,25 @@ function showAdminTab(id,el){
     const reply = input ? input.value.trim() : '';
     if(!reply) return;
     loadFirebase(() => {
-      window._db.collection('messages').doc(id).update({
-        adminReply: reply,
-        adminReplyDate: new Date().toLocaleDateString('ru-RU'),
-        status: 'done'
-      }).then(() => renderAdminMsgs());
+      window._db.collection('messages').doc(id).get().then(doc => {
+        const d = doc.data();
+        window._db.collection('messages').doc(id).update({
+          adminReply: reply,
+          adminReplyDate: new Date().toLocaleDateString('ru-RU'),
+          status: 'done'
+        }).then(() => {
+          // Send email notification to resident
+          emailjs.send('service_obzzywl', 'template_2y7o3qi', {
+            from_name: 'Администратор KÜ Endla 3b',
+            from_email: 'endla3b@gmail.com',
+            message_type: d.type || 'Обращение',
+            message_text: 'Ваше обращение: ' + d.text + '\n\nОтвет администратора: ' + reply,
+            date: new Date().toLocaleDateString('ru-RU'),
+            to_email: d.author.includes('@') ? d.author : d.email || ''
+          }).catch(err => console.log('Email error:', err));
+          renderAdminMsgs();
+        });
+      });
     });
   }
 
