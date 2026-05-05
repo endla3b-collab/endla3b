@@ -800,7 +800,10 @@ function showAdminTab(id,el){
             const d = doc.data();
             const item = document.createElement('div');
             item.className = 'msg-item';
-            item.innerHTML = `<div class="msg-header"><div><div class="msg-cat">${d.type}</div><div class="msg-author">${d.author}</div></div><div class="msg-date">${d.date||''}</div></div><div class="msg-text">${d.text}</div><span class="msg-status ${d.status==='done'?'status-done':'status-open'}">${d.status==='done'?(lang==='ru'?'✓ Решено':'✓ Lahendatud'):(lang==='ru'?'⏳ Ожидает':'⏳ Ootel')}</span>`;
+            const replyBlock = d.adminReply
+              ? `<div style="margin-top:10px;padding:10px;background:#f0f7f0;border-left:3px solid var(--gold);border-radius:4px;font-size:.85rem"><strong>${lang==='ru'?'Ответ администратора:':'Administraatori vastus:'}</strong><br>${d.adminReply}<br><small style="color:var(--gray)">${d.adminReplyDate||''}</small></div>`
+              : '';
+            item.innerHTML = `<div class="msg-header"><div><div class="msg-cat">${d.type}</div><div class="msg-author">${d.author}</div></div><div class="msg-date">${d.date||''}</div></div><div class="msg-text">${d.text}</div>${replyBlock}<span class="msg-status ${d.status==='done'?'status-done':'status-open'}">${d.status==='done'?(lang==='ru'?'✓ Решено':'✓ Lahendatud'):(lang==='ru'?'⏳ Ожидает':'⏳ Ootel')}</span>`;
             list.appendChild(item);
           });
         });
@@ -951,7 +954,23 @@ function showAdminTab(id,el){
             const d = doc.data();
             const div = document.createElement('div');
             div.className = 'msg-admin-item';
-            div.innerHTML = `<div class="msg-admin-header"><div><strong>${d.type}</strong> — ${d.author}<br><small style="color:var(--gray)">${d.date||''}</small></div><div style="display:flex;gap:6px"><button class="btn-success" style="font-size:.75rem;padding:4px 10px" onclick="resolveMsgFb('${doc.id}','${d.status}')">${d.status==='done'?'✓ Решено':'Решить'}</button><button class="btn-danger" onclick="deleteMsgFb('${doc.id}')">✕</button></div></div><div style="font-size:.9rem">${d.text}</div>`;
+            const replyHtml = d.adminReply
+              ? `<div style="margin-top:10px;padding:10px;background:#f0f7f0;border-left:3px solid var(--gold);border-radius:4px;font-size:.85rem"><strong>Ответ администратора:</strong><br>${d.adminReply}<br><small style="color:var(--gray)">${d.adminReplyDate||''}</small></div>`
+              : '';
+            div.innerHTML = `
+              <div class="msg-admin-header">
+                <div><strong>${d.type}</strong> — ${d.author}<br><small style="color:var(--gray)">${d.date||''}</small></div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-success" style="font-size:.75rem;padding:4px 10px" onclick="resolveMsgFb('${doc.id}','${d.status}')">${d.status==='done'?'✓ Решено':'Решить'}</button>
+                  <button class="btn-danger" onclick="deleteMsgFb('${doc.id}')">✕</button>
+                </div>
+              </div>
+              <div style="font-size:.9rem">${d.text}</div>
+              ${replyHtml}
+              <div style="margin-top:10px;display:flex;gap:6px">
+                <input id="reply-${doc.id}" type="text" placeholder="Написать ответ..." style="flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:.85rem" value="${d.adminReply||''}">
+                <button onclick="sendReply('${doc.id}')" style="padding:6px 12px;background:var(--navy);color:white;border:none;border-radius:6px;cursor:pointer;font-size:.85rem">Отправить</button>
+              </div>`;
             el.appendChild(div);
           });
         });
@@ -969,6 +988,21 @@ function showAdminTab(id,el){
     if(!confirm('Удалить обращение?')) return;
     loadFirebase(() => {
       window._db.collection('messages').doc(id).delete().then(() => renderAdminMsgs());
+    });
+  }
+
+  function sendReply(id) {
+    const input = document.getElementById('reply-'+id);
+    const reply = input ? input.value.trim() : '';
+    if(!reply) return;
+    loadFirebase(() => {
+      window._db.collection('messages').doc(id).update({
+        adminReply: reply,
+        adminReplyDate: new Date().toLocaleDateString('ru-RU'),
+        status: 'done'
+      }).then(() => {
+        renderAdminMsgs();
+      });
     });
   }
 
