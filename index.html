@@ -129,6 +129,8 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init("LE_HdBspPDBqsL4o7");</script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('LE_HdBspPDBqsL4o7');</script>
 </head>
 <body>
 
@@ -747,7 +749,7 @@ function showAdminTab(id,el){
 
             // Send email to admin via EmailJS
             if(window.emailjs) {
-              emailjs.send('service_obzzywl', 'template_pjivgpv', {
+              emailjs.send('service_obzzywl', 'template_2y7o3qi', {
                 from_name: name, from_email: email, apt: apt||'—'
               }).catch(e => console.log('Email error:', e));
             }
@@ -824,6 +826,15 @@ function showAdminTab(id,el){
         status: 'open',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
+        // Send email notification to admin
+        emailjs.send('service_obzzywl', 'template_2y7o3qi', {
+          from_name: currentUser.name,
+          from_email: currentUser.email,
+          message_type: type,
+          message_text: body,
+          date: new Date().toLocaleDateString('ru-RU'),
+          to_email: 'endla3b@gmail.com'
+        }).catch(err => console.log('Email error:', err));
         document.getElementById('msg-body').value = '';
         const s = document.getElementById('msg-success');
         s.textContent = s.getAttribute('data-'+lang);
