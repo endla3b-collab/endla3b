@@ -97,6 +97,7 @@
   .welcome-text p{font-size:.875rem;color:rgba(255,255,255,.75)}
   .notice{border-left:4px solid var(--gold);background:#fffbf0;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:12px}
   .notice-title{font-weight:600;font-size:.9rem;color:var(--navy)}
+  .notice-date{font-size:.75rem;color:var(--gold);font-weight:600;margin-top:3px;letter-spacing:.03em}
   .notice-body{font-size:.85rem;color:var(--gray);margin-top:4px}
   .alert{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:16px;display:none}
   .alert.show{display:block}
@@ -338,14 +339,17 @@
           <div class="divider" style="width:32px;margin-bottom:20px"></div>
           <div class="notice">
             <div class="notice-title" data-et="🗓️ Üldkoosolek — 15. mai 2025, kell 18:00" data-ru="🗓️ Общее собрание — 15 мая 2025, в 18:00">🗓️ Üldkoosolek — 15. mai 2025, kell 18:00</div>
+            <div class="notice-date" data-et="Avaldatud: 01.05.2025" data-ru="Опубликовано: 01.05.2025">Avaldatud: 01.05.2025</div>
             <div class="notice-body" data-et="Toimumiskoht: Endla 3b fuajee. Päevakord: 1) 2024. aruanne; 2) hooldusleping; 3) muud. Kõik omanikud on oodatud!" data-ru="Место: вестибюль Endla 3b. Повестка: 1) отчёт за 2024 г.; 2) договор обслуживания; 3) разное. Приглашаются все собственники!">Toimumiskoht: Endla 3b fuajee. Päevakord: 1) 2024. aruanne; 2) hooldusleping; 3) muud. Kõik omanikud on oodatud!</div>
           </div>
           <div class="notice">
             <div class="notice-title" data-et="💧 Vee kuumahind alates 1. maist" data-ru="💧 Тариф на горячую воду с 1 мая">💧 Vee kuumahind alates 1. maist</div>
+            <div class="notice-date" data-et="Avaldatud: 20.04.2025" data-ru="Опубликовано: 20.04.2025">Avaldatud: 20.04.2025</div>
             <div class="notice-body" data-et="Seoses Kohtla-Järve Soojus hindade muutusega tõuseb sooja tarbevee hind 1. maist 2025." data-ru="В связи с изменением тарифов Kohtla-Järve Soojus цена на горячую воду повышается с 1 мая 2025.">Seoses Kohtla-Järve Soojus hindade muutusega tõuseb sooja tarbevee hind 1. maist 2025.</div>
           </div>
           <div class="notice">
             <div class="notice-title" data-et="🔧 Katuse ülevaatus — 5. mai" data-ru="🔧 Осмотр крыши — 5 мая">🔧 Katuse ülevaatus — 5. mai</div>
+            <div class="notice-date" data-et="Avaldatud: 28.04.2025" data-ru="Опубликовано: 28.04.2025">Avaldatud: 28.04.2025</div>
             <div class="notice-body" data-et="Hooldaja viib 5. mail läbi planeeritud katuse ülevaatuse. Ligipääs katusele on sel päeval piiratud." data-ru="5 мая управляющий проведёт плановый осмотр крыши. Доступ на крышу ограничен.">Hooldaja viib 5. mail läbi planeeritud katuse ülevaatuse. Ligipääs katusele on sel päeval piiratud.</div>
           </div>
         </div>
@@ -374,7 +378,7 @@
       <div class="admin-panel">
         <h3>👥 Список жильцов</h3>
         <table class="admin-table">
-          <thead><tr><th>Имя / Email</th><th>Доступ</th><th>Добавлен</th><th>Действие</th></tr></thead>
+          <thead><tr><th>Email</th><th>Пароль</th><th>Добавлен</th><th>Действие</th></tr></thead>
           <tbody id="admin-users-list"></tbody>
         </table>
         <div class="admin-form" style="margin-top:20px">
@@ -382,7 +386,7 @@
           <div class="field" style="margin:0"><label>Пароль</label><input type="text" id="new-user-pw" placeholder="минимум 6 символов"></div>
           <button class="btn-success" onclick="addUser()">+ Добавить</button>
         </div>
-        
+        <p style="font-size:.8rem;color:var(--gray);margin-top:12px">⚠️ После изменений нажмите кнопку "Сохранить и скачать файл" внизу страницы.</p>
       </div>
     </div>
 
@@ -437,7 +441,10 @@
       </div>
     </div>
 
-
+    <div style="text-align:center;margin-top:32px;padding:24px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
+      <p style="margin-bottom:12px;font-weight:600;color:var(--navy)">После всех изменений скачайте обновлённый файл и загрузите на Netlify</p>
+      <button class="btn-primary" onclick="saveAndDownload()" style="font-size:1rem;padding:14px 32px">⬇️ Сохранить и скачать файл</button>
+    </div>
   </div>
 </div>
 
@@ -590,20 +597,7 @@ function showPanel(id,el) {
 }
 
 function openLogin(){ document.getElementById('modal-login').classList.add('open'); }
-function openReg(){ document.getElementById('modal-reg').classList.add('open'); }
-function openNewMsg(){ document.getElementById('modal-msg').classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function showAdminTab(id,el){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  el.classList.add('active');
-  if(id==='tab-pending') renderAdminPending();
-  if(id==='tab-docs') renderAdminDocs();
-  if(id==='tab-msgs') renderAdminMsgs();
-  if(id==='tab-notices') renderAdminNotices();
-  if(id==='tab-users') renderAdminUsers();
-}
 
 // ── FIREBASE AUTH SYSTEM ──
   const ADMIN_EMAIL = 'admin';
@@ -617,7 +611,10 @@ function showAdminTab(id,el){
 
   // Always keep residents list updated from file
   setData('ku_users', {
-    "admin": "endla30323"
+    "admin": "endla30323",
+    "vaslen81@gmail.com": "Endla3b2025",
+    "elanik@endla3b.ee": "elanik123",
+    "offcast.83@gmail.com": "53407827"
   });
   if(!localStorage.getItem('ku_notices')) setData('ku_notices', []);
   if(!localStorage.getItem('ku_docs')) setData('ku_docs', []);
@@ -639,7 +636,7 @@ function showAdminTab(id,el){
         if(loaded === scripts.length) {
           if(!firebase.apps.length) {
             firebase.initializeApp({
-              apiKey: "AIzaSyDfDAGu9KlX4nU6YMRikRdl2R1GS8l5-ik",
+              apiKey: "AIzaSyDfDAGu9KLX4nU6YMRikRdL2R1GS8L5-ik",
               authDomain: "ku-endla-3b.firebaseapp.com",
               projectId: "ku-endla-3b",
               storageBucket: "ku-endla-3b.firebasestorage.app",
@@ -679,16 +676,12 @@ function showAdminTab(id,el){
       window._auth.signInWithEmailAndPassword(email, pw)
         .then(result => {
           const user = result.user;
-          window._db.collection('pending_users').where('email','==',user.email).get()
-              .then(snap => {
-                const userName = (!snap.empty && snap.docs[0].data().name) ? snap.docs[0].data().name : user.email.split('@')[0];
-                currentUser = { name: userName, email: user.email, isAdmin: false };
-                closeModal('modal-login');
-                updateAuthUI();
-                showPage('member');
-                loadMessages();
-                renderDocsForMembers();
-              });
+          currentUser = { name: user.email.split('@')[0], email: user.email, isAdmin: false };
+          closeModal('modal-login');
+          updateAuthUI();
+          showPage('member');
+          loadMessages();
+          renderDocsForMembers();
         })
         .catch(e => {
           let msg = err.getAttribute('data-'+lang);
@@ -748,7 +741,7 @@ function showAdminTab(id,el){
             // Send email to admin via EmailJS
             if(window.emailjs) {
               emailjs.send('service_obzzywl', 'template_pjivgpv', {
-                from_name: name, from_email: email, apt: apt||'—', to_email: 'endla3b@gmail.com'
+                from_name: name, from_email: email, apt: apt||'—'
               }).catch(e => console.log('Email error:', e));
             }
 
@@ -801,10 +794,7 @@ function showAdminTab(id,el){
             const d = doc.data();
             const item = document.createElement('div');
             item.className = 'msg-item';
-            const replyBlock = d.adminReply
-              ? `<div style="margin-top:10px;padding:10px;background:#f0f7f0;border-left:3px solid var(--gold);border-radius:4px;font-size:.85rem"><strong>${lang==='ru'?'Ответ администратора:':'Administraatori vastus:'}</strong><br>${d.adminReply}<br><small style="color:var(--gray)">${d.adminReplyDate||''}</small></div>`
-              : '';
-            item.innerHTML = `<div class="msg-header"><div><div class="msg-cat">${d.type}</div><div class="msg-author">${d.author}</div></div><div class="msg-date">${d.date||''}</div></div><div class="msg-text">${d.text}</div>${replyBlock}<span class="msg-status ${d.status==='done'?'status-done':'status-open'}">${d.status==='done'?(lang==='ru'?'✓ Решено':'✓ Lahendatud'):(lang==='ru'?'⏳ Ожидает':'⏳ Ootel')}</span>`;
+            item.innerHTML = `<div class="msg-header"><div><div class="msg-cat">${d.type}</div><div class="msg-author">${d.author}</div></div><div class="msg-date">${d.date||''}</div></div><div class="msg-text">${d.text}</div><span class="msg-status ${d.status==='done'?'status-done':'status-open'}">${d.status==='done'?(lang==='ru'?'✓ Решено':'✓ Lahendatud'):(lang==='ru'?'⏳ Ожидает':'⏳ Ootel')}</span>`;
             list.appendChild(item);
           });
         });
@@ -819,21 +809,11 @@ function showAdminTab(id,el){
     loadFirebase(() => {
       window._db.collection('messages').add({
         type, text: body,
-        author: currentUser.name,
-        residentEmail: currentUser.email,
+        author: currentUser.email,
         date: new Date().toLocaleDateString('ru-RU'),
         status: 'open',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        // Send email notification to admin
-        emailjs.send('service_obzzywl', 'template_2y7o3qi', {
-          from_name: currentUser.name,
-          from_email: currentUser.email,
-          message_type: type,
-          message_text: body,
-          date: new Date().toLocaleDateString('ru-RU'),
-          to_email: 'endla3b@gmail.com'
-        }).catch(err => console.log('Email error:', err));
         document.getElementById('msg-body').value = '';
         const s = document.getElementById('msg-success');
         s.textContent = s.getAttribute('data-'+lang);
@@ -913,31 +893,19 @@ function showAdminTab(id,el){
 
   // ── ADMIN: USERS LIST ──
   function renderAdminUsers() {
+    const users = getData('ku_users', {});
     const tbody = document.getElementById('admin-users-list');
-    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--gray);padding:12px">Загрузка...</td></tr>';
-    loadFirebase(() => {
-      window._db.collection('pending_users').where('status','==','approved').get()
-        .then(snap => {
-          tbody.innerHTML = '';
-          const adminTr = document.createElement('tr');
-          adminTr.innerHTML = '<td>admin <span class="admin-badge">Админ</span></td><td><small style="color:var(--gray)">Firebase Auth</small></td><td>—</td><td></td>';
-          tbody.appendChild(adminTr);
-          if(snap.empty) return;
-          snap.forEach(doc => {
-            const d = doc.data();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${d.name||''}<br><small style="color:var(--gray)">${d.email||''}</small></td><td><small style="color:var(--gray)">Firebase Auth</small></td><td>${d.approvedAt||'—'}</td><td><button class="btn-danger" onclick="deleteFirebaseUser('${doc.id}','${d.email}')">Удалить</button></td>`;
-            tbody.appendChild(tr);
-          });
-        });
-    });
-  }
-
-  function deleteFirebaseUser(docId, email) {
-    if(!confirm('Удалить жильца ' + email + '? Удалите также в Firebase Console → Authentication')) return;
-    loadFirebase(() => {
-      window._db.collection('pending_users').doc(docId).delete()
-        .then(() => renderAdminUsers());
+    tbody.innerHTML = '';
+    const entries = Object.entries(users);
+    if(entries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--gray);padding:12px">Жильцов нет.</td></tr>';
+      return;
+    }
+    entries.forEach(([email, pw]) => {
+      const isAdmin = email === ADMIN_EMAIL;
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + email + (isAdmin ? ' <span class="admin-badge">Админ</span>' : '') + '</td><td><code>' + pw + '</code></td><td>—</td><td>' + (isAdmin ? '' : '<button class="btn-danger" onclick="deleteUser(\'' + email + '\')">Удалить</button>') + '</td>';
+      tbody.appendChild(tr);
     });
   }
 
@@ -977,23 +945,7 @@ function showAdminTab(id,el){
             const d = doc.data();
             const div = document.createElement('div');
             div.className = 'msg-admin-item';
-            const replyHtml = d.adminReply
-              ? `<div style="margin-top:10px;padding:10px;background:#f0f7f0;border-left:3px solid var(--gold);border-radius:4px;font-size:.85rem"><strong>Ваш ответ:</strong><br>${d.adminReply}<br><small style="color:var(--gray)">${d.adminReplyDate||''}</small></div>`
-              : '';
-            div.innerHTML = `
-              <div class="msg-admin-header">
-                <div><strong>${d.type}</strong> — ${d.author}<br><small style="color:var(--gray)">${d.date||''}</small></div>
-                <div style="display:flex;gap:6px">
-                  <button class="btn-success" style="font-size:.75rem;padding:4px 10px" onclick="resolveMsgFb('${doc.id}','${d.status}')">${d.status==='done'?'✓ Решено':'Решить'}</button>
-                  <button class="btn-danger" onclick="deleteMsgFb('${doc.id}')">✕</button>
-                </div>
-              </div>
-              <div style="font-size:.9rem">${d.text}</div>
-              ${replyHtml}
-              <div style="margin-top:10px;display:flex;gap:6px">
-                <input id="reply-${doc.id}" type="text" placeholder="Написать ответ жильцу..." style="flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:.85rem" value="${d.adminReply||''}">
-                <button onclick="sendReply('${doc.id}')" style="padding:6px 12px;background:var(--navy);color:white;border:none;border-radius:6px;cursor:pointer;font-size:.85rem">Отправить</button>
-              </div>`;
+            div.innerHTML = `<div class="msg-admin-header"><div><strong>${d.type}</strong> — ${d.author}<br><small style="color:var(--gray)">${d.date||''}</small></div><div style="display:flex;gap:6px"><button class="btn-success" style="font-size:.75rem;padding:4px 10px" onclick="resolveMsgFb('${doc.id}','${d.status}')">${d.status==='done'?'✓ Решено':'Решить'}</button><button class="btn-danger" onclick="deleteMsgFb('${doc.id}')">✕</button></div></div><div style="font-size:.9rem">${d.text}</div>`;
             el.appendChild(div);
           });
         });
@@ -1002,25 +954,8 @@ function showAdminTab(id,el){
 
   function resolveMsgFb(id, status) {
     loadFirebase(() => {
-      window._db.collection('messages').doc(id).get().then(doc => {
-        const d = doc.data();
-        const newStatus = status==='done'?'open':'done';
-        window._db.collection('messages').doc(id).update({status: newStatus})
-          .then(() => {
-            // Notify resident when marked as resolved
-            if(newStatus === 'done') {
-              emailjs.send('service_obzzywl', 'template_2y7o3qi', {
-                from_name: 'Администратор KÜ Endla 3b',
-                from_email: 'endla3b@gmail.com',
-                message_type: d.type || 'Обращение',
-                message_text: 'Ваше обращение "' + d.text + '" было отмечено как решённое.',
-                date: new Date().toLocaleDateString('ru-RU'),
-                to_email: d.residentEmail || ''
-              }).catch(err => console.log('Email error:', err));
-            }
-            renderAdminMsgs();
-          });
-      });
+      window._db.collection('messages').doc(id).update({status: status==='done'?'open':'done'})
+        .then(() => renderAdminMsgs());
     });
   }
 
@@ -1028,33 +963,6 @@ function showAdminTab(id,el){
     if(!confirm('Удалить обращение?')) return;
     loadFirebase(() => {
       window._db.collection('messages').doc(id).delete().then(() => renderAdminMsgs());
-    });
-  }
-
-  function sendReply(id) {
-    const input = document.getElementById('reply-'+id);
-    const reply = input ? input.value.trim() : '';
-    if(!reply) return;
-    loadFirebase(() => {
-      window._db.collection('messages').doc(id).get().then(doc => {
-        const d = doc.data();
-        window._db.collection('messages').doc(id).update({
-          adminReply: reply,
-          adminReplyDate: new Date().toLocaleDateString('ru-RU'),
-          status: 'done'
-        }).then(() => {
-          // Send email notification to resident
-          emailjs.send('service_obzzywl', 'template_2y7o3qi', {
-            from_name: 'Администратор KÜ Endla 3b',
-            from_email: 'endla3b@gmail.com',
-            message_type: d.type || 'Обращение',
-            message_text: 'Ваше обращение: ' + d.text + '\n\nОтвет администратора: ' + reply,
-            date: new Date().toLocaleDateString('ru-RU'),
-            to_email: d.residentEmail || ''
-          }).catch(err => console.log('Email error:', err));
-          renderAdminMsgs();
-        });
-      });
     });
   }
 
@@ -1176,14 +1084,18 @@ function showAdminTab(id,el){
           const d = doc.data();
           const div = document.createElement('div');
           div.className = 'notice';
-          div.innerHTML = `<div class="notice-title">${d.title}</div><div class="notice-body">${d.body||''}</div>`;
+          div.innerHTML = `<div class="notice-title">${d.title}</div>${d.date?`<div class="notice-date">${d.date}</div>`:''}<div class="notice-body">${d.body||''}</div>`;
           container.appendChild(div);
         });
       });
     });
   }
 
-
+  function saveAndDownload() {
+    alert(lang==='ru'
+      ? 'Все данные сохраняются автоматически в Firebase. Обновлять файл не нужно!'
+      : 'Kõik andmed salvestatakse automaatselt Firebase\'is. Faili uuendamine pole vajalik!');
+  }
 
   // Load on page open
   document.addEventListener('DOMContentLoaded', () => { renderDocsForMembers(); });</script>
