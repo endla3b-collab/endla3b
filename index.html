@@ -97,7 +97,6 @@
   .welcome-text p{font-size:.875rem;color:rgba(255,255,255,.75)}
   .notice{border-left:4px solid var(--gold);background:#fffbf0;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:12px}
   .notice-title{font-weight:600;font-size:.9rem;color:var(--navy)}
-  .notice-date{font-size:.75rem;color:var(--gold);font-weight:600;margin-top:3px;letter-spacing:.03em}
   .notice-body{font-size:.85rem;color:var(--gray);margin-top:4px}
   .alert{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:16px;display:none}
   .alert.show{display:block}
@@ -339,17 +338,14 @@
           <div class="divider" style="width:32px;margin-bottom:20px"></div>
           <div class="notice">
             <div class="notice-title" data-et="🗓️ Üldkoosolek — 15. mai 2025, kell 18:00" data-ru="🗓️ Общее собрание — 15 мая 2025, в 18:00">🗓️ Üldkoosolek — 15. mai 2025, kell 18:00</div>
-            <div class="notice-date" data-et="Avaldatud: 01.05.2025" data-ru="Опубликовано: 01.05.2025">Avaldatud: 01.05.2025</div>
             <div class="notice-body" data-et="Toimumiskoht: Endla 3b fuajee. Päevakord: 1) 2024. aruanne; 2) hooldusleping; 3) muud. Kõik omanikud on oodatud!" data-ru="Место: вестибюль Endla 3b. Повестка: 1) отчёт за 2024 г.; 2) договор обслуживания; 3) разное. Приглашаются все собственники!">Toimumiskoht: Endla 3b fuajee. Päevakord: 1) 2024. aruanne; 2) hooldusleping; 3) muud. Kõik omanikud on oodatud!</div>
           </div>
           <div class="notice">
             <div class="notice-title" data-et="💧 Vee kuumahind alates 1. maist" data-ru="💧 Тариф на горячую воду с 1 мая">💧 Vee kuumahind alates 1. maist</div>
-            <div class="notice-date" data-et="Avaldatud: 20.04.2025" data-ru="Опубликовано: 20.04.2025">Avaldatud: 20.04.2025</div>
             <div class="notice-body" data-et="Seoses Kohtla-Järve Soojus hindade muutusega tõuseb sooja tarbevee hind 1. maist 2025." data-ru="В связи с изменением тарифов Kohtla-Järve Soojus цена на горячую воду повышается с 1 мая 2025.">Seoses Kohtla-Järve Soojus hindade muutusega tõuseb sooja tarbevee hind 1. maist 2025.</div>
           </div>
           <div class="notice">
             <div class="notice-title" data-et="🔧 Katuse ülevaatus — 5. mai" data-ru="🔧 Осмотр крыши — 5 мая">🔧 Katuse ülevaatus — 5. mai</div>
-            <div class="notice-date" data-et="Avaldatud: 28.04.2025" data-ru="Опубликовано: 28.04.2025">Avaldatud: 28.04.2025</div>
             <div class="notice-body" data-et="Hooldaja viib 5. mail läbi planeeritud katuse ülevaatuse. Ligipääs katusele on sel päeval piiratud." data-ru="5 мая управляющий проведёт плановый осмотр крыши. Доступ на крышу ограничен.">Hooldaja viib 5. mail läbi planeeritud katuse ülevaatuse. Ligipääs katusele on sel päeval piiratud.</div>
           </div>
         </div>
@@ -1084,7 +1080,7 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
           const d = doc.data();
           const div = document.createElement('div');
           div.className = 'notice';
-          div.innerHTML = `<div class="notice-title">${d.title}</div>${d.date?`<div class="notice-date">${d.date}</div>`:''}<div class="notice-body">${d.body||''}</div>`;
+          div.innerHTML = `<div class="notice-title">${d.title}</div><div class="notice-body">${d.body||''}</div>`;
           container.appendChild(div);
         });
       });
