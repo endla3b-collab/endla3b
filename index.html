@@ -695,11 +695,13 @@ function showAdminTab(id,el){
               });
         })
         .catch(e => {
-          let msg = err.getAttribute('data-'+lang);
+          let msg = lang==='ru' ? 'Неверный email или пароль.' : 'Vale e-post või parool.';
           if(e.code === 'auth/user-disabled') {
             msg = lang==='ru'
               ? 'Ваш аккаунт ещё не подтверждён администратором.'
               : 'Teie konto pole veel administraatori poolt kinnitatud.';
+          } else if(e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+            msg = lang==='ru' ? 'Неверный email или пароль.' : 'Vale e-post või parool.';
           }
           err.textContent = msg;
           err.classList.add('show');
