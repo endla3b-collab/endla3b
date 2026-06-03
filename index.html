@@ -683,29 +683,33 @@ function showAdminTab(id,el){
       window._auth.signInWithEmailAndPassword(email, pw)
         .then(result => {
           const user = result.user;
+          function enterMember(name) {
+            currentUser = { name: name, email: user.email, isAdmin: false };
+            closeModal('modal-login');
+            updateAuthUI();
+            showPage('member');
+            loadMessages();
+            renderDocsForMembers();
+          }
           window._db.collection('pending_users').where('email','==',user.email).get()
-              .then(snap => {
-                const userName = (!snap.empty && snap.docs[0].data().name) ? snap.docs[0].data().name : user.email.split('@')[0];
-                currentUser = { name: userName, email: user.email, isAdmin: false };
-                closeModal('modal-login');
-                updateAuthUI();
-                showPage('member');
-                loadMessages();
-                renderDocsForMembers();
-              });
+            .then(snap => {
+              const userName = (!snap.empty && snap.docs[0].data().name) ? snap.docs[0].data().name : user.email.split('@')[0];
+              enterMember(userName);
+            })
+            .catch(() => {
+              enterMember(user.email.split('@')[0]);
+            });
         })
         .catch(e => {
           let msg = '';
           if(e.code === 'auth/user-disabled') {
-            msg = lang==='ru' ? 'Аккаунт заблокирован администратором.' : 'Konto on blokeeritud.';
+            msg = lang==='ru' ? 'Аккаунт заблокирован.' : 'Konto on blokeeritud.';
           } else if(e.code === 'auth/user-not-found') {
-            msg = lang==='ru' ? 'Пользователь не найден. Сначала зарегистрируйтесь.' : 'Kasutajat ei leitud.';
+            msg = lang==='ru' ? 'Пользователь не найден.' : 'Kasutajat ei leitud.';
           } else if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
             msg = lang==='ru' ? 'Неверный пароль.' : 'Vale parool.';
-          } else if(e.code === 'auth/invalid-email') {
-            msg = lang==='ru' ? 'Неверный формат email.' : 'Vale e-posti formaat.';
           } else if(e.code === 'auth/too-many-requests') {
-            msg = lang==='ru' ? 'Слишком много попыток. Подождите немного.' : 'Liiga palju katseid. Oodake.';
+            msg = lang==='ru' ? 'Слишком много попыток. Подождите.' : 'Liiga palju katseid.';
           } else {
             msg = 'Ошибка: ' + (e.code || e.message);
           }
