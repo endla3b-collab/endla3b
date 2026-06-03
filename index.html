@@ -695,13 +695,19 @@ function showAdminTab(id,el){
               });
         })
         .catch(e => {
-          let msg = lang==='ru' ? 'Неверный email или пароль.' : 'Vale e-post või parool.';
+          let msg = '';
           if(e.code === 'auth/user-disabled') {
-            msg = lang==='ru'
-              ? 'Ваш аккаунт ещё не подтверждён администратором.'
-              : 'Teie konto pole veel administraatori poolt kinnitatud.';
-          } else if(e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-            msg = lang==='ru' ? 'Неверный email или пароль.' : 'Vale e-post või parool.';
+            msg = lang==='ru' ? 'Аккаунт заблокирован администратором.' : 'Konto on blokeeritud.';
+          } else if(e.code === 'auth/user-not-found') {
+            msg = lang==='ru' ? 'Пользователь не найден. Сначала зарегистрируйтесь.' : 'Kasutajat ei leitud.';
+          } else if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+            msg = lang==='ru' ? 'Неверный пароль.' : 'Vale parool.';
+          } else if(e.code === 'auth/invalid-email') {
+            msg = lang==='ru' ? 'Неверный формат email.' : 'Vale e-posti formaat.';
+          } else if(e.code === 'auth/too-many-requests') {
+            msg = lang==='ru' ? 'Слишком много попыток. Подождите немного.' : 'Liiga palju katseid. Oodake.';
+          } else {
+            msg = 'Ошибка: ' + (e.code || e.message);
           }
           err.textContent = msg;
           err.classList.add('show');
